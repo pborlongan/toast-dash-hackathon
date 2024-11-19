@@ -22,6 +22,7 @@
 </template>
 
 <style scoped lang="scss">
+  @use 'sass:color';
   .v-img {
     border-radius: 5px;
   }
@@ -32,15 +33,16 @@
   }
 
   .button {
-    background-color: #E5E8EB;
+    background-color: #99bce1;
     border-radius: 5px;
     margin-top: 1rem;
     padding: 1rem;
-    color: #0D171C;
+    color: #ffffff;
     text-decoration: none;
 
     &:hover{
-      background-color: darken(#E5E8EB, 5%);
+      background-color: #c2ccd8;
+      color: #0D171C;
     }
   }
 </style>
