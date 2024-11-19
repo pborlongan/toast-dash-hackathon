@@ -37,7 +37,7 @@
     border-radius: 5px;
     margin-top: 1rem;
     padding: 1rem;
-    color: #ffffff;
+    color: #0D171C;
     text-decoration: none;
 
     &:hover{
