@@ -1,6 +1,6 @@
 <template>
   <v-app-bar :elevation="0" class="border-b-sm">
-    <v-app-bar-title>TalentTua</v-app-bar-title>
+    <v-app-bar-title><a href="/">TalentTua</a></v-app-bar-title>
     <template v-slot:append>
       <div class="nav-right mr-10">
         <a href="/">
