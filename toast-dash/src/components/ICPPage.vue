@@ -45,7 +45,7 @@
           </div>
         </div>
 
-        <div class="chat-bot pa-4 d-flex" v-if="chatBot2">
+        <div class="chat-bot pa-4 d-flex" v-if="response1">
           <div class="response">
             <v-card
               title="You"
@@ -60,6 +60,98 @@
             </v-card>
           </div>
         </div>
+
+
+        <div class="chat-bot pa-4" v-if="response1">
+          <div class="assistant">
+            <v-avatar color="info" size="x-large">
+              <v-icon icon="mdi-account-circle"></v-icon>
+            </v-avatar>
+            <v-card
+              title="TalentTua AI Assistant"
+              subtitle="New"
+              variant="tonal"
+            >
+              <v-card-text>
+                <p>Amazing! According to our source, here are the technologies required for {{ jobSearchText }}.</p>
+                <br />
+                <p>
+                  Backend: PHP, Node.js, AWS <br/>
+                  Frontend: React, Javascript
+                </p>
+                <br />
+                <p class="mb-4">
+                  Is this correct?
+                </p>
+              </v-card-text>
+            </v-card>
+          </div>
+        </div>
+
+        <div class="chat-bot pa-4 d-flex" v-if="response2">
+          <div class="response">
+            <v-card
+              title="You"
+              subtitle="New"
+              variant="tonal"
+            >
+              <v-card-text>
+                <p>
+                  {{ response2 }}
+                </p>
+              </v-card-text>
+            </v-card>
+          </div>
+        </div>
+
+        <div class="chat-bot pa-4" v-if="response2">
+          <div class="assistant">
+            <v-avatar color="info" size="x-large">
+              <v-icon icon="mdi-account-circle"></v-icon>
+            </v-avatar>
+            <v-card
+              title="TalentTua AI Assistant"
+              subtitle="New"
+              variant="tonal"
+            >
+              <v-card-text>
+
+                <p>Got it. According to our Source here are some similar requirements for the {{ jobSearchText }} Role.</p>
+                <br />
+                <p>
+                  Backend: C# .NET, mySQL <br />
+                  Frontend: React, Javascript
+                </p>
+                <br />
+                <p>
+                  Is this correct?
+                </p>
+              </v-card-text>
+
+              <v-card-actions>
+                <v-btn variant="tonal" @click="yesNo">Yes</v-btn>
+                <v-btn variant="tonal" @click="yesNo">No</v-btn>
+              </v-card-actions>
+            </v-card>
+          </div>
+        </div>
+
+        <div class="chat-bot pa-4 d-flex" v-if="response3">
+          <div class="response">
+            <v-card
+              title="You"
+              subtitle="New"
+              variant="tonal"
+            >
+              <v-card-text>
+                <p>
+                  {{ response3 }}
+                </p>
+              </v-card-text>
+            </v-card>
+          </div>
+        </div>
+
       </div>
       <div class="chat-bot-enter">
         <v-text-field class="chat-bot-input" v-model="inputText">
@@ -79,8 +171,10 @@
   const newSearchButton = ref(true);
   const inputText = ref('');
   const inputChat = ref(true);
-  const chatBot2 = ref(false);
   const response1 = ref('');
+  const response2 = ref('');
+  const response3 = ref('');
+
 
   const displayChat = () => {
     chatContainer.value = !chatContainer.value;
@@ -106,11 +200,32 @@
   }
 
   const enterInput = () => {
-    response1.value = inputText.value;
+    if(response1.value == ''){
+      response1.value = inputText.value;
+    }else if(response2.value == '' && response1.value != inputText.value){
+      response2.value = inputText.value;
+    }else if(response3.value == '' && response2.value != inputText.value){
+      response3.value = inputText.value;
+    }
+
     inputText.value = '';
     inputChat.value = true;
-    chatBot2.value = true;
   }
+
+  const yesNo = (event: Event) => {
+    const element = event.currentTarget as Element;
+    inputText.value = element.textContent || '';
+    inputChat.value = false;
+  }
+
+  watch(inputText, () => {
+    if(inputText.value != '') {
+      inputChat.value = false;
+    }
+
+
+  })
+
 </script>
 
 <style scoped lang="scss">
@@ -143,7 +258,7 @@
    }
  }
 
- .chat-bot, .chat-bot-2 {
+ .chat-bot{
    animation: fadeIn 2s forwards;
  }
 
