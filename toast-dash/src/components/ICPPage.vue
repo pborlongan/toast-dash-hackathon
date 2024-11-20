@@ -13,8 +13,7 @@
         </template>
       </v-text-field>
     </div>
-
-<!--    <div class="chat" v-if="chatContainer">
+    <div class="chat" v-if="chatContainer">
       <div class="conversation-container">
 
         <div class="chat-bot pa-4">
@@ -160,9 +159,7 @@
           </template>
         </v-text-field>
       </div>
-    </div>-->
-
-  <div id="WebChatContainer"></div>
+    </div>
   </v-container>
 </template>
 
@@ -176,28 +173,6 @@
   const response1 = ref('');
   const response2 = ref('');
   const response3 = ref('');
-
-
-
-  import {onMounted} from "vue";
-
-  onMounted(() =>{
-    const customElement = document.querySelector('#WebChatContainer');
-    (window as any).watsonAssistantChatOptions = {
-      integrationID: "5496ab7e-2804-43a1-adc4-9e0e23d21e7d", // The ID of this integration.
-      region: "aws-us-east-1", // The region your integration is hosted in.
-      serviceInstanceID: "20240605-0942-3221-70db-d80964322815", // The ID of your service instance.
-      element: customElement,
-      onLoad: async (instance: any) => {await instance.render();}
-    };
-    setTimeout(function(){
-      const t=document.createElement('script');
-      t.src="https://web-chat.global.assistant.watson.appdomain.cloud/versions/" + ((window as any).watsonAssistantChatOptions.clientVersion || 'latest') + "/WatsonAssistantChatEntry.js";
-      document.head.appendChild(t);
-    });
-
-  })
-
 
   const displayChat = () => {
     chatContainer.value = !chatContainer.value;
@@ -338,8 +313,6 @@
    width: 100%;
    height: 500px;
  }
-
-
 </style>
 
 
