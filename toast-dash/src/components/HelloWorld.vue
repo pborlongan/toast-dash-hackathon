@@ -21,28 +21,33 @@
   </v-container>
 </template>
 
+<script setup lang="ts">
+</script>
+
+
 <style scoped lang="scss">
-  @use 'sass:color';
-  .v-img {
-    border-radius: 5px;
-  }
+@use 'sass:color';
+.v-img {
+  border-radius: 5px;
+}
 
-  h3 {
+h3 {
+  color: #0D171C;
+  font-size: 16px;
+}
+
+.button {
+  background-color: #99bce1;
+  border-radius: 5px;
+  margin-top: 1rem;
+  padding: 1rem;
+  color: #0D171C;
+  text-decoration: none;
+
+  &:hover{
+    background-color: #c2ccd8;
     color: #0D171C;
-    font-size: 16px;
   }
+}
 
-  .button {
-    background-color: #99bce1;
-    border-radius: 5px;
-    margin-top: 1rem;
-    padding: 1rem;
-    color: #0D171C;
-    text-decoration: none;
-
-    &:hover{
-      background-color: #c2ccd8;
-      color: #0D171C;
-    }
-  }
 </style>
