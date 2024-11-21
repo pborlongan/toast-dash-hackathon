@@ -75,7 +75,6 @@
               <v-expansion-panels variant="accordion" class="pa-4" multiple>
                 <v-expansion-panel
                   v-for="item in store.toolsTechsResponse.data.data.traitMatrix"
-                  :key="item"
                 >
                   <v-expansion-panel-title>{{ item.name }}</v-expansion-panel-title>
                   <v-expansion-panel-text class="border-t-md">
@@ -341,8 +340,8 @@
       "description": description as any,
       "range": range as any
     }
-    if(store.ICPProfile.traitMatrix.find((obj) => obj.name === name)) {
-      const target = store.ICPProfile.traitMatrix.find((obj) => obj.name === name);
+    if(store.ICPProfile.traitMatrix.find((obj: any) => obj.name === name)) {
+      const target = store.ICPProfile.traitMatrix.find((obj: any) => obj.name === name);
       Object.assign(target || {}, newMatrix || {});
     }else {
       store.ICPProfile.traitMatrix.push(newMatrix)
@@ -352,9 +351,11 @@
   const sendTraitsMatrix = (event: Event) => {
     const element = event.currentTarget as Element;
     const text = element.getElementsByClassName('v-btn__content')[0].textContent;
-    if(text.trim() == 'Yes'){
-      store.sendTraitsMatrix()
-      response2.value = text;
+    if(text){
+      if(text.trim() == 'Yes'){
+        store.sendTraitsMatrix()
+        response2.value = text || '';
+      }
     }
   }
 
