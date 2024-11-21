@@ -9,7 +9,11 @@ export const useAppStore = defineStore('app', {
       data: {
         data: {
           question: '',
-          suggested_tools: [],
+          suggested_tools: [
+            {
+              name: ''
+            }
+          ],
         }
       }
     },
