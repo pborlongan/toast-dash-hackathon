@@ -4,7 +4,6 @@ import axios from "axios";
 
 export const useAppStore = defineStore('app', {
   state: () => ({
-    //
     jobTools: {
       data: {
         data: {
@@ -17,6 +16,34 @@ export const useAppStore = defineStore('app', {
         }
       }
     },
+    undesirableSkillsResponse: {
+      data: {
+        data:{
+
+        }
+      }
+    },
+    toolsTechsResponse: {
+      data: {
+        data: {
+          traitMatrix: [
+            {
+              name: {},
+              description: {},
+            }
+          ],
+          question: "",
+        },
+      }
+    },
+    traitsMatrixResponse: {
+      data:{
+      data: {
+        message: '',
+        topSkills: [],
+        question: ''
+      }}
+    },
     topSkillsResponse: {
       data: {
         data: {
@@ -26,31 +53,19 @@ export const useAppStore = defineStore('app', {
         }
       }
     },
-    topSkills: [
-      "Ambitious Benevolence",
-      "Analytical",
-      "Analyzes Pitfalls",
-      "Animals",
-      "Artistic",
-      "Assertive",
-      "Authoritarian",
-      "Authoritative",
-      "Authoritative Collaboration",
-      "Benevolent Sacrifice",
-    ],
     ICPProfile: {
-      user_id: '',
+      user_id: "12345",
       job_title: '',
+
       jobToolsSkills: [] as any,
+      traitMatrix: [] as any,
       desirableSkills: [] as any,
       undesirableSkills: [] as any
     }
   }),
   actions: {
     async sendJobTitle(jobTitle: any){
-      this.ICPProfile.user_id = '12345';
       this.ICPProfile.job_title = jobTitle;
-
       try {
         this.jobTools = await axios.post('https://talent-tua-api-endpoints.vercel.app/api/jobTitle', {
           "user_id": "12345",
@@ -61,11 +76,20 @@ export const useAppStore = defineStore('app', {
         console.log(error)
       }
     },
-    addSkills(skills: []) {
-      if(this.ICPProfile.jobToolsSkills.length == 0) {
-        this.ICPProfile.jobToolsSkills = skills;
-      }else {
-        this.ICPProfile.jobToolsSkills = [this.ICPProfile.jobToolsSkills, ...skills]
+    async sendToolsTechs(toolsTechs: []) {
+      try {
+        if(this.ICPProfile.jobToolsSkills.length == 0) {
+          this.ICPProfile.jobToolsSkills = toolsTechs;
+        }else {
+          this.ICPProfile.jobToolsSkills = [this.ICPProfile.jobToolsSkills, ...toolsTechs]
+        }
+        this.toolsTechsResponse = await axios.post('\n' +
+          'https://talent-tua-api-endpoints.vercel.app/api/toolsAndTechs', {
+          "user_id": this.ICPProfile.user_id,
+          "tools_techs": toolsTechs
+        })
+      } catch (error){
+        console.log(error)
       }
     },
     async addDesirableSkills(skills: []){
@@ -73,29 +97,39 @@ export const useAppStore = defineStore('app', {
         this.topSkillsResponse = await axios.post('\n' +
           'https://talent-tua-api-endpoints.vercel.app/api/topSkills', {
           "user_id": this.ICPProfile.user_id,
-          "topSkills": this.topSkills
+          "topSkills": skills
         })
-
-        if(this.ICPProfile.desirableSkills.length == 0) {
-          this.ICPProfile.desirableSkills = skills;
-        }else {
-          this.ICPProfile.desirableSkills = [this.ICPProfile.desirableSkills, ...skills]
-        }
+        console.log(this.topSkillsResponse)
       }
       catch (error) {
         console.log(error)
       }
     },
-    addUndesirableSkills(skills: []){
-      if(this.ICPProfile.undesirableSkills.length == 0) {
-        this.ICPProfile.undesirableSkills = skills;
-      }else {
-        this.ICPProfile.undesirableSkills = [this.ICPProfile.undesirableSkills, ...skills]
+    async sendTraitsMatrix(){
+      try {
+        this.traitsMatrixResponse = await axios.post('\n' +
+          'https://talent-tua-api-endpoints.vercel.app/api/traitMatrix', {
+          "user_id": this.ICPProfile.user_id,
+          "traitMatrix": this.ICPProfile.traitMatrix
+        })
       }
-
-      console.log(this.ICPProfile)
-    }
-
+      catch (error) {
+        console.log(error)
+      }
+    },
+    async addUndesirableSkills(skills: []){
+      try {
+        this.undesirableSkillsResponse = await axios.post('\n' +
+          'https://talent-tua-api-endpoints.vercel.app/api/undesirableSkills', {
+          "user_id": this.ICPProfile.user_id,
+          "undesirableSkills": skills
+        })
+        console.log(this.undesirableSkillsResponse)
+      }
+      catch (error) {
+        console.log(error)
+      }
+    },
   }
 
 })

@@ -5,7 +5,7 @@
       <h4 class="font-weight-medium mt-3">Our AI assistant will help you define job roles, input required skills, and create the Ideal Candidate Profile for your next hire.</h4>
     </div>
 
-    <div class="w-100 mt-10">
+    <div class="job-search-container w-100 my-10">
       <v-text-field color="primary" label="Which job role are you hiring for?" variant="outlined" v-model="jobSearchText">
         <template #append>
           <v-btn class="mb-1 mr-1" outlined color="indigo" @click="submitJobTitle" :disabled="searchButton"> Search </v-btn>
@@ -14,7 +14,7 @@
       </v-text-field>
     </div>
     <div class="chat" v-if="chatContainer">
-      <div class="conversation-container">
+      <div class="conversation-container" id="conversation-container">
 
         <div class="chat-bot pa-4">
           <div class="assistant">
@@ -33,7 +33,7 @@
                 <p>{{ store.jobTools.data.data.question }}</p>
               </v-card-text>
               <v-card-actions>
-                <div class="d-flex flex-wrap ga-3">
+                <div class="d-flex flex-wrap ga-3 w-100">
                   <v-btn variant="tonal" v-for="(item) in store.jobTools.data.data.suggested_tools" @click="addJobTools">
                     {{ item.name }}
                   </v-btn>
@@ -70,12 +70,33 @@
               variant="tonal"
             >
               <v-card-text>
-                <p>Select the top desirable skills for this role.</p>
+                <p>{{ store.toolsTechsResponse.data.data.question }} Rate each one from 1-4.</p>
+              </v-card-text>
+              <v-expansion-panels variant="accordion" class="pa-4" multiple>
+                <v-expansion-panel
+                  v-for="item in store.toolsTechsResponse.data.data.traitMatrix"
+                  :key="item"
+                >
+                  <v-expansion-panel-title>{{ item.name }}</v-expansion-panel-title>
+                  <v-expansion-panel-text class="border-t-md">
+                    <p class="my-3"> {{ item.description }} </p>
+                    <br />
+                    <div class="d-flex ga-2">
+                      <v-btn v-for="(number, index) in 4" :key="index" @click="addRange(item.name, item.description, index+1)"> {{ number }}</v-btn>
+                    </div>
+                  </v-expansion-panel-text>
+                </v-expansion-panel>
+              </v-expansion-panels>
+              <v-card-text>
+                <p>Are you done rating all of the traits?</p>
               </v-card-text>
               <v-card-actions>
-                <div class="d-flex flex-wrap ga-3">
-                  <v-btn variant="tonal" v-for="(item) in store.topSkills" @click="addDesirableSkills">
-                    {{ item }}
+                <div class="d-flex flex-wrap ga-3 w-100">
+                  <v-btn variant="tonal" @click="sendTraitsMatrix">
+                    Yes
+                  </v-btn>
+                  <v-btn variant="tonal" @click="sendTraitsMatrix">
+                    No
                   </v-btn>
                 </div>
               </v-card-actions>
@@ -99,7 +120,6 @@
           </div>
         </div>
 
-
         <div class="chat-bot pa-4" v-if="response2">
           <div class="assistant">
             <v-avatar color="info" size="x-large">
@@ -111,11 +131,12 @@
               variant="tonal"
             >
               <v-card-text>
-                <p>{{ store.topSkillsResponse.data.data.question }}</p>
+                <p>{{store.traitsMatrixResponse.data.data.message}}</p>
+                <p>{{ store.traitsMatrixResponse.data.data.question }}</p>
               </v-card-text>
               <v-card-actions>
                 <div class="d-flex flex-wrap ga-3">
-                  <v-btn variant="tonal" v-for="(item) in store.topSkillsResponse.data.data.undesirableSkills" @click="addUndesirableSkills">
+                  <v-btn variant="tonal" v-for="(item) in store.traitsMatrixResponse.data.data.topSkills" @click="addDesirableSkills">
                     {{ item }}
                   </v-btn>
                 </div>
@@ -151,23 +172,16 @@
               variant="tonal"
             >
               <v-card-text>
-                <p>Thank you so much! We're creating an ideal candidate profile for you:</p>
-                <br>
-
-                <div class="mb-4">
-                  <p class="text-sm-h6"> Here is the Ideal Candidate profile for a <span style="text-transform: capitalize; font-weight: bold;"> {{ store.ICPProfile.job_title }}</span> </p>
-                  <br>
-                  <p> <b>Job / Tools:</b> <span v-for="(item, index) in store.ICPProfile.jobToolsSkills">{{ index == store.ICPProfile.desirableSkills.length - 1 ? item : item.toString().concat(', ') }}</span> </p>
-                  <p> <b>Desirable Soft Skills: </b> <span v-for="(item, index) in store.ICPProfile.desirableSkills">{{ index == store.ICPProfile.desirableSkills.length - 1 ? item : item.toString().concat(', ') }}</span> </p>
-                  <p> <b>Undesirable Soft Skills: </b> <span v-for="(item, index) in store.ICPProfile.undesirableSkills">{{ index == store.ICPProfile.undesirableSkills.length - 1 ? item : item.toString().concat(', ') }}</span> </p>
-                </div>
-
-                .
-                .
-                .
-
-                <p class="mb-4">Please provide an email address so we can email the details to you!</p>
+                <p>{{store.topSkillsResponse.data.data.message}}</p>
+                <p>{{ store.topSkillsResponse.data.data.question }}</p>
               </v-card-text>
+              <v-card-actions>
+                <div class="d-flex flex-wrap ga-3">
+                  <v-btn variant="tonal" v-for="(item) in store.topSkillsResponse.data.data.undesirableSkills" @click="addUndesirableSkills">
+                    {{ item }}
+                  </v-btn>
+                </div>
+              </v-card-actions>
             </v-card>
           </div>
         </div>
@@ -233,10 +247,14 @@
   const desirableSkills = ref([] as any);
   const undesirableSkills = ref([] as any);
 
+
   const response1 = ref('');
   const response2 = ref('');
   const response3 = ref('');
   const response4 = ref('');
+  const response5 = ref('');
+
+
 
   const displayChat = () => {
     chatContainer.value = !chatContainer.value;
@@ -277,21 +295,25 @@
   }
 
   const enterInput = () => {
-    if(jobSkills.value.length > 0 && response1.value == ''){
+    if (jobSkills.value.length > 0 && response1.value == '') {
       response1.value = jobSkills.value.join(", ");
-      store.addSkills(jobSkills.value);
-    }else if(desirableSkills.value.length > 0 && response2.value == ''){
-      response2.value = desirableSkills.value.join(", ");
+      store.sendToolsTechs(jobSkills.value);
+    } else if (desirableSkills.value.length > 0 && response3.value == '') {
+      response3.value = desirableSkills.value.join(", ");
       store.addDesirableSkills(desirableSkills.value);
-    }else if(undesirableSkills.value.length > 0 && response3.value == ''){
-      response3.value = undesirableSkills.value.join(", ");
+    } else if (undesirableSkills.value.length > 0 && response4.value == '') {
+      response4.value = undesirableSkills.value.join(", ")
       store.addUndesirableSkills(undesirableSkills.value);
-    }else if(response1.value && response2.value && response3.value && response4.value == ''){
+    } else if (undesirableSkills.value.length > 0 && response5.value == '') {
+      response5.value = undesirableSkills.value.join(", ")
+      store.addUndesirableSkills(undesirableSkills.value);
+    } else if (response1.value && response2.value && response3.value && response4.value == '') {
       response4.value = inputText.value;
     }
 
     inputText.value = '';
     inputChat.value = true;
+    scrollToBottom()
   }
 
   watch(inputText, () => {
@@ -306,9 +328,44 @@
     chatContainer.value = !chatContainer.value;
   }
 
+  const scrollToBottom = () => {
+    const element = document.getElementById('conversation-container');
+    if(element) {
+      element.scrollTop = element.scrollHeight;
+    }
+  }
+
+  const addRange = (name, description, range) => {
+    const newMatrix = {
+      "name": name,
+      "description": description,
+      "range": range
+    }
+    if(store.ICPProfile.traitMatrix.find((obj) => obj.name === name)) {
+      const target = store.ICPProfile.traitMatrix.find((obj) => obj.name === name);
+      Object.assign(target || {}, newMatrix || {});
+    }else {
+      store.ICPProfile.traitMatrix.push(newMatrix)
+    }
+  }
+
+  const sendTraitsMatrix = (event: Event) => {
+    const element = event.currentTarget as Element;
+    const text = element.getElementsByClassName('v-btn__content')[0].textContent;
+    if(text.trim() == 'Yes'){
+      store.sendTraitsMatrix()
+      response2.value = text;
+    }
+  }
+
+
 </script>
 
 <style scoped lang="scss">
+.btn-active {
+  background-color: #0d47a1;
+  color: white;
+}
  h4 {
    color: #4F7A94;
  }
@@ -320,9 +377,27 @@
 
    .chat-bot-enter {
      position: absolute;
-     padding: 1rem;
      bottom: 0;
      width: 100%;
+
+     @media screen and (max-width: 1023px){
+       bottom: -28px;
+       :deep(.v-input) {
+          display: flex;
+          flex-direction: column;
+       }
+       :deep(.v-input__append) {
+         margin-left: 0;
+         justify-content: center;
+         .v-btn {
+           margin-top: 1rem;
+         }
+       }
+     }
+
+     :deep(.v-input__details) {
+       display: none;
+     }
    }
 
    .conversation-container {
@@ -347,6 +422,17 @@
    to { opacity: 1; }
  }
 
+ .v-card-actions {
+   :deep(.v-btn){
+     height: fit-content;
+     padding: 10px;
+   }
+   :deep(.v-btn__content) {
+     white-space: break-spaces;
+     text-align: left;
+   }
+ }
+
  .response {
 
    :deep(.v-card-item__content){
@@ -354,6 +440,8 @@
      flex-direction: row;
      align-items: flex-end;
      column-gap: 10px;
+
+
 
      .v-card-subtitle {
        color: #07446a;
@@ -365,6 +453,10 @@
  .assistant {
    display: flex;
    column-gap: 10px;
+   @media screen and (max-width: 1024px) {
+     flex-direction: column;
+     row-gap: 10px;
+   }
    .v-card {
      background-color: #ffffff !important;
      width: 100%;
@@ -394,6 +486,23 @@
  #WebChatContainer {
    width: 100%;
    height: 500px;
+ }
+
+ .job-search-container {
+  @media screen and (max-width: 1023px) {
+    .v-input {
+      display: flex;
+      flex-direction: column;
+    }
+    :deep(.v-input__append){
+      margin-top: 1rem;
+      margin-left: 0;
+      justify-content: center;
+    }
+    :deep(.v-input__details) {
+      display: none;
+    }
+  }
  }
 </style>
 
