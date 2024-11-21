@@ -337,9 +337,9 @@
 
   const addRange = (name, description, range) => {
     const newMatrix = {
-      "name": name,
-      "description": description,
-      "range": range
+      "name": name as any,
+      "description": description as any,
+      "range": range as any
     }
     if(store.ICPProfile.traitMatrix.find((obj) => obj.name === name)) {
       const target = store.ICPProfile.traitMatrix.find((obj) => obj.name === name);
