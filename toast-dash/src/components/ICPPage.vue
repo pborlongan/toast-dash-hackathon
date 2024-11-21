@@ -335,7 +335,7 @@
     }
   }
 
-  const addRange = (name, description, range) => {
+  const addRange = (name: any, description: any, range: any) => {
     const newMatrix = {
       "name": name as any,
       "description": description as any,
