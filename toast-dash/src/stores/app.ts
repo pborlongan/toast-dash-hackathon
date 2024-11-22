@@ -16,20 +16,25 @@ export const useAppStore = defineStore('app', {
         }
       }
     },
-    undesirableSkillsResponse: {
-      data: {
-        data:{
-
-        }
-      }
-    },
     toolsTechsResponse: {
       data: {
         data: {
           traitMatrix: [
             {
-              name: {},
-              description: {},
+              Dynamic_Balanced: '',
+              Gentle_Balanced: '',
+              Mastery: '',
+              Novice: '',
+              trait1: {
+                name: '',
+                description: '',
+                ranking: '',
+              },
+              trait2: {
+                name: '',
+                description: '',
+                ranking: '',
+              }
             }
           ],
           question: "",
@@ -40,9 +45,35 @@ export const useAppStore = defineStore('app', {
       data:{
       data: {
         message: '',
-        topSkills: [],
+        topSkills: [
+          {
+            trait: '',
+            rating: '',
+            importance: '',
+            frequency:''
+          }
+        ],
         question: ''
       }}
+    },
+    ICPResponse: {
+      data: {
+        data: {
+          idealCandidateProfile: {
+            HatsCenter: [],
+            jobTitle: "",
+            screeningQuestions: [],
+            toolsTechnologies: [],
+            topSkills: [],
+            traitsMatrix: [],
+            undesirableSkills: [],
+            userId: "",
+          },
+          message: "",
+          pdfLink: "",
+          question: "",
+        }
+      }
     },
     topSkillsResponse: {
       data: {
@@ -78,16 +109,13 @@ export const useAppStore = defineStore('app', {
     },
     async sendToolsTechs(toolsTechs: []) {
       try {
-        if(this.ICPProfile.jobToolsSkills.length == 0) {
-          this.ICPProfile.jobToolsSkills = toolsTechs;
-        }else {
-          this.ICPProfile.jobToolsSkills = [this.ICPProfile.jobToolsSkills, ...toolsTechs]
-        }
         this.toolsTechsResponse = await axios.post('\n' +
           'https://talent-tua-api-endpoints.vercel.app/api/toolsAndTechs', {
           "user_id": this.ICPProfile.user_id,
           "tools_techs": toolsTechs
         })
+
+        this.ICPProfile.traitMatrix = this.toolsTechsResponse.data.data.traitMatrix;
       } catch (error){
         console.log(error)
       }
@@ -119,12 +147,12 @@ export const useAppStore = defineStore('app', {
     },
     async addUndesirableSkills(skills: []){
       try {
-        this.undesirableSkillsResponse = await axios.post('\n' +
+        this.ICPResponse = await axios.post('\n' +
           'https://talent-tua-api-endpoints.vercel.app/api/undesirableSkills', {
           "user_id": this.ICPProfile.user_id,
           "undesirableSkills": skills
         })
-        console.log(this.undesirableSkillsResponse)
+        console.log(this.ICPResponse)
       }
       catch (error) {
         console.log(error)

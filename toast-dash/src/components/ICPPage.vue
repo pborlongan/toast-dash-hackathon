@@ -2,7 +2,7 @@
   <v-container class="my-4 mx-auto h-100 d-sm-flex flex-column">
     <div>
       <h2 class="font-weight-medium">Find your next great hire with TalentTua</h2>
-      <h4 class="font-weight-medium mt-3">Our AI assistant will help you define job roles, input required skills, and create the Ideal Candidate Profile for your next hire.</h4>
+      <h4 class="font-weight-medium mt-3">Our assistant will help you define job roles, input required skills, and create the Ideal Candidate Profile for your next hire.</h4>
     </div>
 
     <div class="job-search-container w-100 my-10">
@@ -22,7 +22,7 @@
               <v-icon icon="mdi-account-circle"></v-icon>
             </v-avatar>
             <v-card
-              title="TalentTua AI Assistant"
+              title="TalentTua Assistant"
               subtitle="New"
               variant="tonal"
             >
@@ -65,7 +65,7 @@
               <v-icon icon="mdi-account-circle"></v-icon>
             </v-avatar>
             <v-card
-              title="TalentTua AI Assistant"
+              title="TalentTua Assistant"
               subtitle="New"
               variant="tonal"
             >
@@ -76,12 +76,22 @@
                 <v-expansion-panel
                   v-for="item in store.toolsTechsResponse.data.data.traitMatrix"
                 >
-                  <v-expansion-panel-title>{{ item.name }}</v-expansion-panel-title>
-                  <v-expansion-panel-text class="border-t-md">
-                    <p class="my-3"> {{ item.description }} </p>
-                    <br />
-                    <div class="d-flex ga-2">
-                      <v-btn v-for="(number, index) in 4" :key="index" @click="addRange(item.name, item.description, index+1)"> {{ number }}</v-btn>
+                  <v-expansion-panel-title>{{ item.Mastery }} </v-expansion-panel-title>
+                  <v-expansion-panel-text class="border-t-md d-flex">
+                    <div class="d-flex flex-col">
+                      <p class="my-3 mr-3"> {{ item.trait1.name }} </p>
+                      <br />
+                      <div class="d-flex ga-2">
+                        <v-btn v-for="(number, index) in 4" :key="index" @click="addRange(item.Mastery,  'one', item.trait1, index+1)"> {{ number }}</v-btn>
+                      </div>
+                    </div>
+
+                    <div class="d-flex flex-col">
+                      <p class="my-3 mr-3"> {{ item.trait2.name }} </p>
+                      <br />
+                      <div class="d-flex ga-2">
+                        <v-btn v-for="(number, index) in 4" :key="index" @click="addRange(item.Mastery, 'two', item.trait2, index+1)"> {{ number }}</v-btn>
+                      </div>
                     </div>
                   </v-expansion-panel-text>
                 </v-expansion-panel>
@@ -125,7 +135,7 @@
               <v-icon icon="mdi-account-circle"></v-icon>
             </v-avatar>
             <v-card
-              title="TalentTua AI Assistant"
+              title="TalentTua Assistant"
               subtitle="New"
               variant="tonal"
             >
@@ -136,7 +146,7 @@
               <v-card-actions>
                 <div class="d-flex flex-wrap ga-3">
                   <v-btn variant="tonal" v-for="(item) in store.traitsMatrixResponse.data.data.topSkills" @click="addDesirableSkills">
-                    {{ item }}
+                    {{ item.trait }}
                   </v-btn>
                 </div>
               </v-card-actions>
@@ -166,7 +176,7 @@
               <v-icon icon="mdi-account-circle"></v-icon>
             </v-avatar>
             <v-card
-              title="TalentTua AI Assistant"
+              title="TalentTua Assistant"
               subtitle="New"
               variant="tonal"
             >
@@ -208,16 +218,106 @@
               <v-icon icon="mdi-account-circle"></v-icon>
             </v-avatar>
             <v-card
-              title="TalentTua AI Assistant"
+              title="TalentTua Assistant"
               subtitle="New"
               variant="tonal"
             >
               <v-card-text>
-                <p class="mb-2">Thank you so much! We will be sending it to you shortly.</p>
+                <h4 class="text-sm-h6">Here's your Ideal Candidate Profile!</h4>
+                <b>Job Title: </b><span style="text-transform: capitalize">{{ store.ICPResponse.data.data.idealCandidateProfile.jobTitle }}</span>
+                <br/>
+                <b>Tools And Technologies for Day 1: </b><span v-for="(item, index) in store.ICPResponse.data.data.idealCandidateProfile.toolsTechnologies" style="text-transform: capitalize">{{ store.ICPResponse.data.data.idealCandidateProfile.toolsTechnologies.length == index + 1 ? item.concat(''): item.concat(', ')  }}</span>
+                <br />
+                <b>Your Top Desired Soft Skills: </b><span v-for="(item, index) in store.ICPResponse.data.data.idealCandidateProfile.topSkills" style="text-transform: capitalize">{{ store.ICPResponse.data.data.idealCandidateProfile.topSkills.length == index + 1 ? item.concat(''): item.concat(', ')  }}</span>
+                <br />
+                <b>Your Top Undesired Soft Skills: </b><span v-for="(item, index) in store.ICPResponse.data.data.idealCandidateProfile.undesirableSkills" style="text-transform: capitalize">{{ store.ICPResponse.data.data.idealCandidateProfile.undesirableSkills.length == index + 1 ? item.concat(''): item.concat(', ')  }}</span>
+                <br />
+                <b v-if="store.ICPResponse.data.data.pdfLink">Want to learn more about your Ideal Profile Candidate? Download your generated PDF here: <a :href="store.ICPResponse.data.data.pdfLink">PDF Link</a></b>
+                <p class="my-4">
+                  {{store.ICPResponse.data.data.question}}
+                </p>
+              </v-card-text>
+
+              <v-card-actions>
+                <div class="d-flex flex-wrap ga-3 w-100">
+                  <v-btn variant="tonal" @click="sendICPResponse">
+                    Yes
+                  </v-btn>
+                  <v-btn variant="tonal" @click="sendICPResponse">
+                    No
+                  </v-btn>
+                </div>
+              </v-card-actions>
+            </v-card>
+          </div>
+        </div>
+
+        <div class="chat-bot pa-4 d-flex" v-if="response5">
+          <div class="response">
+            <v-card
+              title="You"
+              subtitle="New"
+              variant="tonal"
+            >
+              <v-card-text>
+                <p>
+                  {{ response5 }}
+                </p>
               </v-card-text>
             </v-card>
           </div>
         </div>
+
+        <div class="chat-bot pa-4" v-if="response5">
+          <div class="assistant">
+            <v-avatar color="info" size="x-large">
+              <v-icon icon="mdi-account-circle"></v-icon>
+            </v-avatar>
+            <v-card
+              title="TalentTua Assistant"
+              subtitle="New"
+              variant="tonal"
+            >
+              <v-card-text>
+                <p class="my-4">Thank you! Please provide your email address if you would like the ICP emailed and if you would like to use the TalentTua process to help match candidates to the profile.</p>
+              </v-card-text>
+            </v-card>
+          </div>
+        </div>
+
+        <div class="chat-bot pa-4 d-flex" v-if="response6">
+          <div class="response">
+            <v-card
+              title="You"
+              subtitle="New"
+              variant="tonal"
+            >
+              <v-card-text>
+                <p>
+                  {{ response6 }}
+                </p>
+              </v-card-text>
+            </v-card>
+          </div>
+        </div>
+
+        <div class="chat-bot pa-4" v-if="response6">
+          <div class="assistant">
+            <v-avatar color="info" size="x-large">
+              <v-icon icon="mdi-account-circle"></v-icon>
+            </v-avatar>
+            <v-card
+              title="TalentTua Assistant"
+              subtitle="New"
+              variant="tonal"
+            >
+              <v-card-text>
+                <p class="my-6">Thank you! You are now subscribed to our newsletter.</p>
+              </v-card-text>
+            </v-card>
+          </div>
+        </div>
+
       </div>
 
       <div class="chat-bot-enter">
@@ -252,13 +352,7 @@
   const response3 = ref('');
   const response4 = ref('');
   const response5 = ref('');
-
-
-
-  const displayChat = () => {
-    chatContainer.value = !chatContainer.value;
-    searchButtonValidation();
-  }
+  const response6 = ref('');
 
   const clearChat = () => {
     jobSearchText.value = '';
@@ -267,10 +361,6 @@
     chatContainer.value = false;
   }
 
-  const searchButtonValidation = () => {
-    searchButton.value = jobSearchText.value != '';
-    newSearchButton.value = false;
-  }
 
   const addJobTools = (event: Event) => {
     const element = event.currentTarget as Element;
@@ -303,11 +393,8 @@
     } else if (undesirableSkills.value.length > 0 && response4.value == '') {
       response4.value = undesirableSkills.value.join(", ")
       store.addUndesirableSkills(undesirableSkills.value);
-    } else if (undesirableSkills.value.length > 0 && response5.value == '') {
-      response5.value = undesirableSkills.value.join(", ")
-      store.addUndesirableSkills(undesirableSkills.value);
-    } else if (response1.value && response2.value && response3.value && response4.value == '') {
-      response4.value = inputText.value;
+    } else if (response1.value && response2.value && response3.value && response4.value && response5.value && response6.value == '') {
+      response6.value = inputText.value;
     }
 
     inputText.value = '';
@@ -334,17 +421,24 @@
     }
   }
 
-  const addRange = (name: any, description: any, range: any) => {
-    const newMatrix = {
-      "name": name as any,
-      "description": description as any,
-      "range": range as any
+  const addRange = (mastery: any, traitNum: any, trait: any, ranking: any) => {
+    const newTraitRanking = {
+      "name": trait.name,
+      "description": trait.description,
+      "ranking": ranking,
     }
-    if(store.ICPProfile.traitMatrix.find((obj: any) => obj.name === name)) {
-      const target = store.ICPProfile.traitMatrix.find((obj: any) => obj.name === name);
-      Object.assign(target || {}, newMatrix || {});
-    }else {
-      store.ICPProfile.traitMatrix.push(newMatrix)
+    if(store.ICPProfile.traitMatrix.find((obj: any) => obj.Mastery === mastery)) {
+      const target = store.ICPProfile.traitMatrix.find((obj: any) => obj.Mastery === mastery);
+      switch (trait) {
+        case "one":
+          target.trait1 = newTraitRanking;
+          break;
+        case "two":
+          target.trait2 = newTraitRanking;
+          break;
+        default:
+          break;
+      }
     }
   }
 
@@ -358,6 +452,17 @@
       }
     }
   }
+
+  const sendICPResponse = (event: Event) => {
+    const element = event.currentTarget as Element;
+    const text = element.getElementsByClassName('v-btn__content')[0].textContent;
+    if(text){
+      if(text.trim() == 'Yes'){
+        response5.value = text || '';
+      }
+    }
+  }
+
 
 
 </script>
