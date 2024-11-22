@@ -34,7 +34,9 @@
               </v-card-text>
               <v-card-actions>
                 <div class="d-flex flex-wrap ga-3 w-100">
-                  <v-btn variant="tonal" v-for="(item) in store.jobTools.data.data.suggested_tools" @click="addJobTools">
+                  <v-btn variant="tonal"
+                         :class="{ 'btn-active': item.isSelected, 'btn-inactive': !item.isSelected }"
+                         v-for="(item) in store.jobTools.data.data.suggested_tools" @click="addJobTools(item, $event)">
                     {{ item.name }}
                   </v-btn>
                 </div>
@@ -70,19 +72,36 @@
               variant="tonal"
             >
               <v-card-text>
-                <p>{{ store.toolsTechsResponse.data.data.question }} Rate each one from 1-4.</p>
+                <p>{{ store.toolsTechsResponse.data.data.question }}</p>
+                <br />
+                <p>Please rate each trait from 1-4, with 1 being the lowest and 4 the highest.</p>
+                <br />
+                <p> For example:</p>
+                <p> 4 - important and required daily </p>
+                <p> 3 - important and not required daily </p>
+                <p> 2 - not important but required daily </p>
+                <p> 1 - not important and not required daily </p>
+                <br />
               </v-card-text>
               <v-expansion-panels variant="accordion" class="pa-4" multiple>
                 <v-expansion-panel
-                  v-for="item in store.toolsTechsResponse.data.data.traitMatrix"
+                  v-for="(item, index) in store.toolsTechsResponse.data.data.traitMatrix"
+                  :key="item.Mastery"
                 >
-                  <v-expansion-panel-title>{{ item.Mastery }} </v-expansion-panel-title>
+                  <v-expansion-panel-title>
+                    {{ item.Mastery }}
+                  </v-expansion-panel-title>
                   <v-expansion-panel-text class="border-t-md d-flex">
                     <div class="d-flex flex-col">
                       <p class="my-3 mr-3"> {{ item.trait1.name }} </p>
                       <br />
                       <div class="d-flex ga-2">
-                        <v-btn v-for="(number, index) in 4" :key="index" @click="addRange(item.Mastery,  'one', item.trait1, index+1)"> {{ number }}</v-btn>
+                        <v-btn variant="tonal" v-for="(number, btnIndex) in 4"
+                               :class="{'btn-active': item.activeButton1 === btnIndex + 1}"
+                               :key="btnIndex"
+                               @click="handleButtonClick(item, 'one', btnIndex + 1)">
+                          {{number}}
+                        </v-btn>
                       </div>
                     </div>
 
@@ -90,7 +109,12 @@
                       <p class="my-3 mr-3"> {{ item.trait2.name }} </p>
                       <br />
                       <div class="d-flex ga-2">
-                        <v-btn v-for="(number, index) in 4" :key="index" @click="addRange(item.Mastery, 'two', item.trait2, index+1)"> {{ number }}</v-btn>
+                        <v-btn variant="tonal" v-for="(number, btnIndex) in 4"
+                               :class="{'btn-active': item.activeButton2 === btnIndex + 1}"
+                               :key="btnIndex"
+                               @click="handleButtonClick(item, 'two', btnIndex + 1)">
+                          {{number}}
+                        </v-btn>
                       </div>
                     </div>
                   </v-expansion-panel-text>
@@ -101,10 +125,12 @@
               </v-card-text>
               <v-card-actions>
                 <div class="d-flex flex-wrap ga-3 w-100">
-                  <v-btn variant="tonal" @click="sendTraitsMatrix">
+                  <v-btn variant="tonal" @click="sendTraitsMatrix"
+                         :class="{ 'btn-active': selectedOption === 'Yes', 'btn-inactive': selectedOption !== 'Yes' }">
                     Yes
                   </v-btn>
-                  <v-btn variant="tonal" @click="sendTraitsMatrix">
+                  <v-btn variant="tonal" @click="sendTraitsMatrix"
+                         :class="{ 'btn-active': selectedOption === 'No', 'btn-inactive': selectedOption !== 'No' }">
                     No
                   </v-btn>
                 </div>
@@ -145,7 +171,9 @@
               </v-card-text>
               <v-card-actions>
                 <div class="d-flex flex-wrap ga-3">
-                  <v-btn variant="tonal" v-for="(item) in store.traitsMatrixResponse.data.data.topSkills" @click="addDesirableSkills">
+                  <v-btn variant="tonal"
+                         :class="{ 'btn-active': item.isSelected, 'btn-inactive': !item.isSelected }"
+                         v-for="(item) in store.traitsMatrixResponse.data.data.topSkills"   @click="addDesirableSkills(item, $event)">
                     {{ item.trait }}
                   </v-btn>
                 </div>
@@ -186,7 +214,11 @@
               </v-card-text>
               <v-card-actions>
                 <div class="d-flex flex-wrap ga-3">
-                  <v-btn variant="tonal" v-for="(item) in store.topSkillsResponse.data.data.undesirableSkills" @click="addUndesirableSkills">
+                  <v-btn variant="tonal"
+                         :class="{ 'btn-active': isSelected(item), 'btn-inactive': !isSelected(item) }"
+                         v-for="(item, index) in store.topSkillsResponse.data.data.undesirableSkills"
+                         :key="index"
+                         @click="addUndesirableSkills(item, index, $event)">
                     {{ item }}
                   </v-btn>
                 </div>
@@ -240,10 +272,12 @@
 
               <v-card-actions>
                 <div class="d-flex flex-wrap ga-3 w-100">
-                  <v-btn variant="tonal" @click="sendICPResponse">
+                  <v-btn variant="tonal" @click="sendICPResponse"
+                         :class="{ 'btn-active': selectedICP === 'Yes', 'btn-inactive': selectedICP !== 'Yes' }">
                     Yes
                   </v-btn>
-                  <v-btn variant="tonal" @click="sendICPResponse">
+                  <v-btn variant="tonal" @click="sendICPResponse"
+                         :class="{ 'btn-active': selectedICP === 'No', 'btn-inactive': selectedICP !== 'No' }">
                     No
                   </v-btn>
                 </div>
@@ -280,6 +314,16 @@
             >
               <v-card-text>
                 <p class="my-4">Thank you! Please provide your email address if you would like the ICP emailed and if you would like to use the TalentTua process to help match candidates to the profile.</p>
+                <p class="mb-4">
+                  <v-checkbox label="Checkbox">
+                    <template #label>
+                      <div>
+                        Yes, I agree to receiving email updates from TalentTua. I understand I can change my consent at any time. By clicking accept, I agree to the terms and conditions of the <a href="https://talenttua.com/privacy/">Privacy Policy</a>.
+                      </div>
+                    </template>
+                  </v-checkbox>
+
+                </p>
               </v-card-text>
             </v-card>
           </div>
@@ -346,6 +390,8 @@
   const desirableSkills = ref([] as any);
   const undesirableSkills = ref([] as any);
 
+  const selectedOption = ref<string>('');
+  const selectedICP = ref<string>('');
 
   const response1 = ref('');
   const response2 = ref('');
@@ -361,24 +407,43 @@
     chatContainer.value = false;
   }
 
+  // Track selected items by their indices
+  const selectedIndices = ref<number[]>([]);
 
-  const addJobTools = (event: Event) => {
+  // Check if an item is selected by its index
+  const isSelected = (item: string): boolean => {
+    return selectedIndices.value.includes(store.topSkillsResponse.data.data.undesirableSkills.indexOf(item))
+  };
+
+
+  const addJobTools = (item: any, event: Event) => {
     const element = event.currentTarget as Element;
     jobSkills.value.push(element.textContent || '');
     inputText.value = jobSkills.value.join(", ");
+    item.isSelected = !item.isSelected;
     inputChat.value = false;
   }
 
-  const addDesirableSkills = (event: Event) => {
+  const addDesirableSkills = (item: any, event: Event) => {
+    console.log(item)
     const element = event.currentTarget as Element;
     desirableSkills.value.push(element.textContent || '');
+    item.isSelected = !item.isSelected;
     inputText.value = desirableSkills.value.join(", ");
     inputChat.value = false;
   }
 
-  const addUndesirableSkills = (event: Event) => {
+  const addUndesirableSkills = (item: any, index: any, event: Event) => {
     const element = event.currentTarget as Element;
     undesirableSkills.value.push(element.textContent || '');
+
+    let itemIndex: number = store.topSkillsResponse.data.data.undesirableSkills.indexOf(item);
+    if (selectedIndices.value.includes(itemIndex)) {
+      selectedIndices.value = selectedIndices.value.filter(i => i !== itemIndex);
+    } else {
+      selectedIndices.value.push(itemIndex);
+    }
+
     inputText.value = undesirableSkills.value.join(", ");
     inputChat.value = false;
   }
@@ -420,7 +485,34 @@
       element.scrollTop = element.scrollHeight;
     }
   }
+  // Function to handle button click and update active state
+  const handleButtonClick = (item: any, traitNum: string, ranking: number) => {
+    // Update the active button state for each trait
+    if (traitNum === 'one') {
+      item.activeButton1 = ranking;  // Set the active button for trait1
+    } else if (traitNum === 'two') {
+      item.activeButton2 = ranking;  // Set the active button for trait2
+    }
 
+    // Call the addRange function to update the trait data
+    addRange(item.Mastery, traitNum, traitNum === 'one' ? item.trait1 : item.trait2, ranking);
+  };
+  interface Trait {
+    name: string;
+    description: string;
+    ranking: string;
+    activeButton1?: number;  // Optional, as per your original structure
+    activeButton2?: number;  // Optional, as per your original structure
+  }
+
+  interface TraitMatrix {
+    Dynamic_Balanced: string;
+    Gentle_Balanced: string;
+    Mastery: string;
+    Novice: string;
+    trait1: Trait;
+    trait2: Trait;
+  }
   const addRange = (mastery: any, traitNum: any, trait: any, ranking: any) => {
     const newTraitRanking = {
       "name": trait.name,
@@ -428,16 +520,18 @@
       "ranking": ranking,
     }
     if(store.ICPProfile.traitMatrix.find((obj: any) => obj.Mastery === mastery)) {
-      const target = store.ICPProfile.traitMatrix.find((obj: any) => obj.Mastery === mastery);
-      switch (trait) {
-        case "one":
-          target.trait1 = newTraitRanking;
-          break;
-        case "two":
-          target.trait2 = newTraitRanking;
-          break;
-        default:
-          break;
+      const target = store.ICPProfile.traitMatrix.find((obj: any) => obj.Mastery === mastery) as TraitMatrix | undefined;
+      if(target) {
+        switch (trait) {
+          case "one":
+            target.trait1 = newTraitRanking;
+            break;
+          case "two":
+            target.trait2 = newTraitRanking;
+            break;
+          default:
+            break;
+        }
       }
     }
   }
@@ -447,8 +541,13 @@
     const text = element.getElementsByClassName('v-btn__content')[0].textContent;
     if(text){
       if(text.trim() == 'Yes'){
-        store.sendTraitsMatrix()
+        store.sendTraitsMatrix();
         response2.value = text || '';
+        selectedOption.value = 'Yes';
+      }
+      else if(text.trim() == 'No'){
+        response2.value = text || '';
+        selectedOption.value = 'No';
       }
     }
   }
@@ -459,11 +558,14 @@
     if(text){
       if(text.trim() == 'Yes'){
         response5.value = text || '';
+        selectedICP.value = 'Yes';
+      }
+        else if(text.trim() == 'No'){
+        response2.value = text || '';
+        selectedICP.value = 'No';
       }
     }
   }
-
-
 
 </script>
 

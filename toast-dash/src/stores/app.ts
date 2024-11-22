@@ -10,7 +10,8 @@ export const useAppStore = defineStore('app', {
           question: '',
           suggested_tools: [
             {
-              name: ''
+              name: '',
+              isSelected: false
             }
           ],
         }
@@ -25,6 +26,8 @@ export const useAppStore = defineStore('app', {
               Gentle_Balanced: '',
               Mastery: '',
               Novice: '',
+              activeButton1: 0,
+              activeButton2: 0,
               trait1: {
                 name: '',
                 description: '',
@@ -50,7 +53,8 @@ export const useAppStore = defineStore('app', {
             trait: '',
             rating: '',
             importance: '',
-            frequency:''
+            frequency:'',
+            isSelected: false
           }
         ],
         question: ''
@@ -78,7 +82,7 @@ export const useAppStore = defineStore('app', {
     topSkillsResponse: {
       data: {
         data: {
-          undesirableSkills: [],
+          undesirableSkills: [] as string[],
           message: '',
           question: '',
         }
@@ -88,10 +92,10 @@ export const useAppStore = defineStore('app', {
       user_id: "12345",
       job_title: '',
 
-      jobToolsSkills: [] as any,
-      traitMatrix: [] as any,
-      desirableSkills: [] as any,
-      undesirableSkills: [] as any
+      jobToolsSkills: [] as string[],
+      traitMatrix: [] as object[],
+      desirableSkills: [] as string[],
+      undesirableSkills: [] as string[]
     }
   }),
   actions: {
@@ -127,7 +131,6 @@ export const useAppStore = defineStore('app', {
           "user_id": this.ICPProfile.user_id,
           "topSkills": skills
         })
-        console.log(this.topSkillsResponse)
       }
       catch (error) {
         console.log(error)
