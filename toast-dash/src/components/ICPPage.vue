@@ -226,11 +226,11 @@
                 <h4 class="text-sm-h6">Here's your Ideal Candidate Profile!</h4>
                 <b>Job Title: </b><span style="text-transform: capitalize">{{ store.ICPResponse.data.data.idealCandidateProfile.jobTitle }}</span>
                 <br/>
-                <b>Tools And Technologies for Day 1: </b><span v-for="(item, index) in store.ICPResponse.data.data.idealCandidateProfile.toolsTechnologies" style="text-transform: capitalize">{{ store.ICPResponse.data.data.idealCandidateProfile.toolsTechnologies.length == index + 1 ? item.concat(''): item.concat(', ')  }}</span>
+                <b>Tools And Technologies for Day 1: </b><span v-for="(item, index) in store.ICPResponse.data.data.idealCandidateProfile.toolsTechnologies" style="text-transform: capitalize">{{ store.ICPResponse.data.data.idealCandidateProfile.toolsTechnologies.length == index + 1 ? (item as any).concat('') : (item as any).concat(', ')  }}</span>
                 <br />
-                <b>Your Top Desired Soft Skills: </b><span v-for="(item, index) in store.ICPResponse.data.data.idealCandidateProfile.topSkills" style="text-transform: capitalize">{{ store.ICPResponse.data.data.idealCandidateProfile.topSkills.length == index + 1 ? item.concat(''): item.concat(', ')  }}</span>
+                <b>Your Top Desired Soft Skills: </b><span v-for="(item, index) in store.ICPResponse.data.data.idealCandidateProfile.topSkills" style="text-transform: capitalize">{{ store.ICPResponse.data.data.idealCandidateProfile.topSkills.length == index + 1 ? (item as any).concat('') : (item as any).concat(', ') }}</span>
                 <br />
-                <b>Your Top Undesired Soft Skills: </b><span v-for="(item, index) in store.ICPResponse.data.data.idealCandidateProfile.undesirableSkills" style="text-transform: capitalize">{{ store.ICPResponse.data.data.idealCandidateProfile.undesirableSkills.length == index + 1 ? item.concat(''): item.concat(', ')  }}</span>
+                <b>Your Top Undesired Soft Skills: </b><span v-for="(item, index) in store.ICPResponse.data.data.idealCandidateProfile.undesirableSkills" style="text-transform: capitalize">{{ store.ICPResponse.data.data.idealCandidateProfile.undesirableSkills.length == index + 1 ? (item as any).concat('') : (item as any).concat(', ')  }}</span>
                 <br />
                 <b v-if="store.ICPResponse.data.data.pdfLink">Want to learn more about your Ideal Profile Candidate? Download your generated PDF here: <a :href="store.ICPResponse.data.data.pdfLink">PDF Link</a></b>
                 <p class="my-4">
